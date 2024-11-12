@@ -118,7 +118,7 @@
 
       // Function to tokenize text
       function tokenize(text) {
-        return text.match(/\w+|\n/g) || [];
+        return text.match(/[\w\u0400-\u04FF]+|\n/g) || [];
       }
 
       // Function to split tokens into pages with 1000 tokens per page
