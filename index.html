@@ -113,22 +113,35 @@
         let bookContent = [];
         let currentPage = 1;
 
-        // Fetch book content from the text file
+        // Function to tokenize text
+        function tokenize(text) {
+            return text.match(/\w+|\n|[^\w\s]/g) || [];
+        }
+
+        // Function to split tokens into pages with 1000 tokens per page
+        function splitIntoPages(tokens, pageSize = 1000) {
+            let pages = [];
+            for (let i = 0; i < tokens.length; i += pageSize) {
+                // Join tokens for each page
+                pages.push(tokens.slice(i, i + pageSize).join(" "));
+            }
+            return pages;
+        }
+
+        // Fetch book content from the text file, tokenize, and split into pages
         async function loadBook() {
             try {
                 const response = await fetch('data/oybek_mukammal_asarlar_to_plami_20_jildlik_5_jild_qutlug_qon_roman_start_400_whole_ocr.txt'); // Path to the text file in the repository
                 const text = await response.text();
-                splitIntoPages(text);
+
+                // Tokenize the text and split into pages
+                const tokens = tokenize(text);
+                bookContent = splitIntoPages(tokens);
+
+                // Render the first page
                 renderPage();
             } catch (error) {
                 console.error("Error loading book content:", error);
-            }
-        }
-
-        // Split the content into pages of around 1000 characters
-        function splitIntoPages(text, pageSize = 1000) {
-            for (let i = 0; i < text.length; i += pageSize) {
-                bookContent.push(text.slice(i, i + pageSize));
             }
         }
 
