@@ -1,182 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Book Viewer</title>
     <style>
-        /* Basic CSS styling */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+      /* Basic CSS styling */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            height: 100vh;
-            margin: 0;
-            background-color: #f4f4f9;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100vh;
+        margin: 0;
+        background-color: #f4f4f9;
+      }
 
-        .container {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 15px;
-            text-align: center;
-            height: 100%;
-        }
+      .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 15px;
+        text-align: center;
+        height: 100%;
+      }
 
-        .title {
-            font-size: 1.5em;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 10px;
-        }
+      .title {
+        font-size: 1.5em;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 10px;
+      }
 
-        .content-box {
-            flex: 1;
-            width: 100%;
-            max-width: 600px;
-            padding: 20px;
-            overflow-y: auto;
-            border: 1px solid #9c27b0;
-            border-radius: 10px;
-            background-color: #fff;
-            font-size: 14px;
-            line-height: 1.6;
-            color: #333;
-            white-space: pre-wrap;
-            text-align: left;
-        }
+      .content-box {
+        flex: 1;
+        width: 100%;
+        max-width: 600px;
+        padding: 20px;
+        overflow-y: auto;
+        border: 1px solid #9c27b0;
+        border-radius: 10px;
+        background-color: #fff;
+        font-size: 14px;
+        line-height: 1.6;
+        color: #333;
+        white-space: pre-wrap;
+        text-align: left;
+      }
 
-        .page-number {
-            margin: 10px 0;
-            font-size: 14px;
-            color: #666;
-        }
+      .page-number {
+        margin: 10px 0;
+        font-size: 14px;
+        color: #666;
+      }
 
-        .button-container {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            max-width: 400px;
-            margin-top: 10px;
-        }
+      .button-container {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        max-width: 400px;
+        margin-top: 10px;
+      }
 
-        .button {
-            flex: 1;
-            margin: 0 5px;
-            padding: 10px;
-            background-color: #9c27b0;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-weight: bold;
-            text-align: center;
-            font-size: 14px;
-            cursor: pointer;
-        }
+      .button {
+        flex: 1;
+        margin: 0 5px;
+        padding: 10px;
+        background-color: #9c27b0;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-weight: bold;
+        text-align: center;
+        font-size: 14px;
+        cursor: pointer;
+      }
 
-        .button:disabled {
-            background-color: #d1c4e9;
-            color: #777;
-        }
+      .button:disabled {
+        background-color: #d1c4e9;
+        color: #777;
+      }
     </style>
-</head>
-<body>
-
+  </head>
+  <body>
     <div class="container">
-        <div class="title">Book Viewer</div>
+      <div class="title">Book Viewer</div>
 
-        <div class="content-box" id="contentBox">
-            <!-- Page content will appear here -->
-        </div>
+      <div class="content-box" id="contentBox">
+        <!-- Page content will appear here -->
+      </div>
 
-        <div class="page-number" id="pageNumber">
-            <!-- Page number will appear here -->
-        </div>
+      <div class="page-number" id="pageNumber">
+        <!-- Page number will appear here -->
+      </div>
 
-        <div class="button-container">
-            <button class="button" id="prevButton" onclick="prevPage()">Previous</button>
-            <button class="button" id="nextButton" onclick="nextPage()">Next</button>
-        </div>
+      <div class="button-container">
+        <button class="button" id="prevButton" onclick="prevPage()">
+          Previous
+        </button>
+        <button class="button" id="nextButton" onclick="nextPage()">
+          Next
+        </button>
+      </div>
     </div>
 
     <script>
-        // Initialize variables
-        let bookContent = [];
-        let currentPage = 1;
+      // Initialize variables
+      let bookContent = [];
+      let currentPage = 1;
 
-        // Function to tokenize text
-        function tokenize(text) {
-            return text.match(/\w+|\n|[^\w\s]/g) || [];
+      // Function to tokenize text
+      function tokenize(text) {
+        return text.match(/\w+|\n|[.,!?;:'"(){}\[\]\-—]/g) || [];
+      }
+
+      // Function to split tokens into pages with 1000 tokens per page
+      function splitIntoPages(tokens, pageSize = 1000) {
+        let pages = [];
+        for (let i = 0; i < tokens.length; i += pageSize) {
+          // Join tokens for each page
+          pages.push(tokens.slice(i, i + pageSize).join(" "));
         }
+        return pages;
+      }
 
-        // Function to split tokens into pages with 1000 tokens per page
-        function splitIntoPages(tokens, pageSize = 1000) {
-            let pages = [];
-            for (let i = 0; i < tokens.length; i += pageSize) {
-                // Join tokens for each page
-                pages.push(tokens.slice(i, i + pageSize).join(" "));
-            }
-            return pages;
+      // Fetch book content from the text file, tokenize, and split into pages
+      async function loadBook() {
+        try {
+          const response = await fetch(
+            "data/oybek_mukammal_asarlar_to_plami_20_jildlik_5_jild_qutlug_qon_roman_start_400_whole_ocr.txt"
+          ); // Path to the text file in the repository
+          const text = await response.text();
+
+          // Tokenize the text and split into pages
+          const tokens = tokenize(text);
+          bookContent = splitIntoPages(tokens);
+
+          // Render the first page
+          renderPage();
+        } catch (error) {
+          console.error("Error loading book content:", error);
         }
+      }
 
-        // Fetch book content from the text file, tokenize, and split into pages
-        async function loadBook() {
-            try {
-                const response = await fetch('data/oybek_mukammal_asarlar_to_plami_20_jildlik_5_jild_qutlug_qon_roman_start_400_whole_ocr.txt'); // Path to the text file in the repository
-                const text = await response.text();
+      // Render the current page
+      function renderPage() {
+        const contentBox = document.getElementById("contentBox");
+        const pageNumber = document.getElementById("pageNumber");
 
-                // Tokenize the text and split into pages
-                const tokens = tokenize(text);
-                bookContent = splitIntoPages(tokens);
+        // Display the current page content and page number
+        contentBox.textContent =
+          bookContent[currentPage - 1] || "Page not found.";
+        pageNumber.textContent = `Page ${currentPage} of ${bookContent.length}`;
 
-                // Render the first page
-                renderPage();
-            } catch (error) {
-                console.error("Error loading book content:", error);
-            }
+        // Enable or disable buttons based on the current page
+        document.getElementById("prevButton").disabled = currentPage === 1;
+        document.getElementById("nextButton").disabled =
+          currentPage === bookContent.length;
+      }
+
+      // Go to the previous page
+      function prevPage() {
+        if (currentPage > 1) {
+          currentPage--;
+          renderPage();
         }
+      }
 
-        // Render the current page
-        function renderPage() {
-            const contentBox = document.getElementById("contentBox");
-            const pageNumber = document.getElementById("pageNumber");
-
-            // Display the current page content and page number
-            contentBox.textContent = bookContent[currentPage - 1] || "Page not found.";
-            pageNumber.textContent = `Page ${currentPage} of ${bookContent.length}`;
-
-            // Enable or disable buttons based on the current page
-            document.getElementById("prevButton").disabled = currentPage === 1;
-            document.getElementById("nextButton").disabled = currentPage === bookContent.length;
+      // Go to the next page
+      function nextPage() {
+        if (currentPage < bookContent.length) {
+          currentPage++;
+          renderPage();
         }
+      }
 
-        // Go to the previous page
-        function prevPage() {
-            if (currentPage > 1) {
-                currentPage--;
-                renderPage();
-            }
-        }
-
-        // Go to the next page
-        function nextPage() {
-            if (currentPage < bookContent.length) {
-                currentPage++;
-                renderPage();
-            }
-        }
-
-        // Load the book when the page loads
-        loadBook();
+      // Load the book when the page loads
+      loadBook();
     </script>
-</body>
+  </body>
 </html>
